@@ -32,6 +32,24 @@ function HospedeList() {
         }
     };
 
+    const deletarHospede = async (id) => {
+
+        try {
+            const response = await fetch(`http://localhost:8080/hospedes/${id}`, {
+                method: 'DELETE',
+            });
+
+            if (!response.ok) {
+                throw new Error('Erro ao excluir hóspede, ele deve ter uma Reserva Cadastrada, Exclua primeiro a Reserva e tente Novamente.');
+            }
+
+
+            listarHospedes();
+        } catch (err) {
+            setError(err.message);
+        }
+    };
+
 
 
     useEffect(() => {
@@ -48,30 +66,6 @@ function HospedeList() {
         setHospedeSelecionado(hospede);
         setIsAdding(true);
     };
-
-
-
-
-
-    const deletarHospede = async (id) => {
-
-        try {
-            const response = await fetch(`http://localhost:8080/hospedes/${id}`, {
-                method: 'DELETE',
-            });
-
-            if (!response.ok) {
-                throw new Error('Erro ao excluir hóspede');
-            }
-
-
-            listarHospedes();
-        } catch (err) {
-            setError(err.message);
-        }
-    };
-
-
 
 
 
@@ -167,7 +161,7 @@ function HospedeList() {
                                             />
                                         </div>
                                     )}
-                                    style={{ width: '30%' }}
+                                   
                                 />
                             </DataTable>
                         )}
