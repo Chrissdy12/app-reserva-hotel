@@ -8,14 +8,14 @@ import HospedeForm from "./HospedeForm";
 
 function HospedeList() {
 
-    
+
     const [hospedes, setHospedes] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [isAdding, setIsAdding] = useState(false);
     const [hospedeSelecionado, setHospedeSelecionado] = useState(null);
 
-    
+
 
     const listarHospedes = async () => {
         try {
@@ -52,7 +52,7 @@ function HospedeList() {
 
 
 
-    
+
     const deletarHospede = async (id) => {
 
         try {
@@ -64,14 +64,14 @@ function HospedeList() {
                 throw new Error('Erro ao excluir hóspede');
             }
 
-           
+
             listarHospedes();
         } catch (err) {
             setError(err.message);
         }
     };
 
-    
+
 
 
 
@@ -113,6 +113,12 @@ function HospedeList() {
                                 tableStyle={{ minWidth: '50rem' }}
                                 sortMode="multiple"
                             >
+                                <Column
+                                    field="id"
+                                    header="Id"
+                                    style={{ width: '1%' }}
+                                    sortable
+                                />
                                 <Column
                                     field="nome"
                                     header="Nome"

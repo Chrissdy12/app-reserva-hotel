@@ -6,21 +6,27 @@ import { Button } from "primereact/button";
 import { ProgressSpinner } from "primereact/progressspinner";
 import ReservaForm from "./ReservaForm";
 
-function ReservaList() {
 
-    
+
+
+function ReservaList() {
     const [reservas, setReservas] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [isAdding, setIsAdding] = useState(false);
     const [reservaSelecionada, setReservaSelecionada] = useState(null);
+    const [hospedeId, setHospedeId] = useState(""); 
 
 
 
 
-    const listarReservas = async () => {
+    const listarReservas = async (idHospede) => {
+        setLoading(true);
         try {
-            const response = await fetch('http://localhost:8080/reservas');
+            const url = idHospede
+                ? `http://localhost:8080/reservas/${idHospede}` 
+                : 'http://localhost:8080/reservas'; 
+            const response = await fetch(url);
             if (!response.ok) {
                 throw new Error('Falha na requisição');
             }
@@ -36,15 +42,20 @@ function ReservaList() {
 
 
 
+
     useEffect(() => {
         listarReservas();
     }, []);
+
+
 
     const salvarReservas = async () => {
         await listarReservas();
         setIsAdding(false);
         setReservaSelecionada(null);
     };
+
+
 
     const handleEditarReserva = (Reserva) => {
         setReservaSelecionada(Reserva);
@@ -53,11 +64,7 @@ function ReservaList() {
 
 
 
-
-
-
     const deletarReserva = async (id) => {
-
         try {
             const response = await fetch(`http://localhost:8080/reservas/${id}`, {
                 method: 'DELETE',
@@ -67,7 +74,6 @@ function ReservaList() {
                 throw new Error('Erro ao excluir Reserva');
             }
 
-
             listarReservas();
         } catch (err) {
             setError(err.message);
@@ -75,6 +81,14 @@ function ReservaList() {
     };
 
 
+
+    const handleBuscarReservas = () => {
+        if (hospedeId) {
+            listarReservas(hospedeId);  
+        } else {
+            listarReservas();  
+        }
+    };
 
 
 
@@ -97,6 +111,20 @@ function ReservaList() {
                     />
                 </div>
 
+            
+                <div style={{ marginBottom: '1rem' }}>
+                    <input
+                        type="number"
+                        placeholder="Digite ID do Hospede"
+                        value={hospedeId}
+                        onChange={(e) => setHospedeId(e.target.value)}
+                        style={{ marginRight: '0.5rem', padding: '1rem' }}
+                    />
+                    <Button label="Buscar Reservas por ID do Hospede" onClick={handleBuscarReservas} />
+                </div>
+
+
+
                 {loading && <ProgressSpinner />}
                 {error && <p style={{ color: 'red' }}>Erro: {error}</p>}
 
@@ -117,26 +145,29 @@ function ReservaList() {
                                 sortMode="multiple"
                             >
                                 <Column
+                                    field="hospede.id"
+                                    header="Id do Hospede"
+                                    style={{ width: '1%' }}
+                                    sortable
+                                />
+                                <Column
                                     field="hospede.nome"
                                     header="Nome do Reservante"
                                     style={{ width: '15%' }}
                                     sortable
                                 />
-
                                 <Column
                                     field="dataChekin"
                                     header="Data De entrada"
                                     style={{ width: '15%' }}
                                     sortable
                                 />
-
                                 <Column
                                     field="dataCheckout"
                                     header="Data De saida"
                                     style={{ width: '15%' }}
                                     sortable
                                 />
-
                                 <Column
                                     field="valorTotal"
                                     header="Valor"
@@ -144,10 +175,6 @@ function ReservaList() {
                                     sortable
                                     body={(rowData) => `R$ ${rowData.valorTotal}`}
                                 />
-
-
-
-
                                 <Column
                                     header="Ações"
                                     body={(rowData) => (
@@ -166,15 +193,21 @@ function ReservaList() {
                                             />
                                         </div>
                                     )}
-                                    style={{ width: '30%' }}
+                                    
+
+
                                 />
                             </DataTable>
+
+
                         )}
                         {!loading && reservas.length === 0 && (
                             <p>Nenhuma Reserva cadastrada.</p>
                         )}
                     </>
                 )}
+
+
             </Panel>
         </div>
     );
