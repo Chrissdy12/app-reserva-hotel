@@ -66,7 +66,7 @@ function ReservaForm({ reserva, atualizarLista }) {
             });
 
             if (response.ok) {
-                setMensagem(reserva ? 'Reserva atualizada com sucesso!' : 'Reserva cadastrada com sucesso!');
+                setMensagem(reserva ? 'Reserva editada com sucesso!' : 'Reserva cadastrada com sucesso!');
                 setHospede(null);
                 setDataChekin('');
                 setDataCheckout('');
